@@ -1,17 +1,14 @@
-package com.example.mukondono.texttovoice;
+package mukondono.intermediary;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,16 +16,19 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
-public class MainActivity extends Activity implements OnInitListener{
+public class VoiceActivity extends Activity implements OnInitListener {
 
     private EditText input;
     private TextToSpeech tts;
     private Button speak;
+    private Locale userLocale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_voice);
+
+        userLocale = Locale.JAPAN;
 
         tts = new TextToSpeech(this, this);
 
@@ -55,7 +55,11 @@ public class MainActivity extends Activity implements OnInitListener{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // TODO: show multiple languages to select from
+        // TODO: 10/26/15 allow user to select any locale from the ones available on their device
+        // Set<Locale> tts.getAvailableLanguages(); // min api is 21
+        // bool tts.isLanguageAvailable(Locale loc);
+        getMenuInflater().inflate(R.menu.menu_voice, menu);
         return true;
     }
 
@@ -74,12 +78,19 @@ public class MainActivity extends Activity implements OnInitListener{
         return super.onOptionsItemSelected(item);
     }
 
+    public void onEnglishSelect(View v) {
+        userLocale = Locale.US;
+    }
+
+    public void onJapaneseSelect(View v) {
+        userLocale = Locale.JAPAN;
+    }
+
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             //Setting speech language
-            // TODO: make a spinner to select language
-            int result = tts.setLanguage(Locale.JAPAN);
+            int result = tts.setLanguage(userLocale);
             //If your device doesn't support language you set above
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
