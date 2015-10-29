@@ -72,12 +72,16 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         return super.onOptionsItemSelected(item);
     }
 
-    public void onEnglishSelect(View v) {
+    public boolean onEnglishSelect(MenuItem menuItem) {
         userLocale = Locale.US;
+        tts.setLanguage(userLocale);
+        return true;
     }
 
-    public void onJapaneseSelect(View v) {
+    public boolean onJapaneseSelect(MenuItem menuItem) {
         userLocale = Locale.JAPAN;
+        tts.setLanguage(userLocale);
+        return true;
     }
 
     @Override
