@@ -1,10 +1,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/english" android:title="English"
-        android:orderInCategory="100" app:showAsAction="never"
-        android:onClick="onEnglishSelect"/>
-    <item android:id="@+id/japanese" android:title="Japanese"
-        android:orderInCategory="100" app:showAsAction="never"
-        android:onClick="onJapaneseSelect"/>
 </menu>
