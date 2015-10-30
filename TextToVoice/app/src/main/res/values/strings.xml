@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Intermediary</string>
+    <string name="action_settings">Settings</string>
+    <string name="japanese">Japanese</string>
+    <string name="us">US</string>
+    <string name="locale_selection">Choose a locale</string>
+    <string name="speak">Speak!</string>
+</resources>
