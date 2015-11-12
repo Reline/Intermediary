@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.lang.annotation.Target;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnInitListener {
@@ -28,6 +27,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     private EditText input;
     private TextToSpeech tts;
     private Button speak;
+    private Button stop;
     private Locale userLocale;
     private Locale[] availableLanguages;
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
             }
         });
 
-        speak = (Button) findViewById(R.id.button);
+        speak = (Button) findViewById(R.id.speak);
         speak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +68,16 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                     ttsGreater21(input.getText().toString());
                 } else {
                     ttsUnder20(input.getText().toString());
+                }
+            }
+        });
+
+        stop = (Button) findViewById(R.id.stop);
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(tts.isSpeaking()) {
+                    tts.stop();
                 }
             }
         });
@@ -127,7 +137,6 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
             // TODO check if the language is installed on the device, if so...
             //Setting speech language
             //If your device supports language you set above
-            /** onInit is called after this line... **/
             //if (tts.setLanguage(locale) == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE)
                 menu.add(locale.toString());
         }
@@ -136,6 +145,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         menu.add((Locale.US).toString());*/
 
         return true;
+        /** onInit is called after this function... **/
     }
 
     @Override
@@ -176,6 +186,16 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
 
     @Override
     protected void onDestroy() {
+
+        // E/ViewRootImpl: sendUserActionEvent() mView == null // device issue, not app related
+
+        // TODO: 11/12/15 fix InputConnection warnings
+        // W/IInputConnectionWrapper: showStatusIcon on inactive InputConnection
+        // W/IInputConnectionWrapper: getExtractedText on inactive InputConnection
+        // W/IInputConnectionWrapper: beginBatchEdit on inactive InputConnection
+        // W/IInputConnectionWrapper: endBatchEdit on inactive InputConnection
+        // W/IInputConnectionWrapper: finishComposingText on inactive InputConnection
+
         //Close the Text to Speech Library
         if(tts != null) {
 

@@ -9,14 +9,28 @@
         android:id="@+id/edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxLines="12"
+        android:hint="Type your message here"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/speak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="83dp"
+        android:hint="Speak"
         android:layout_below="@+id/edittext"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignLeft="@+id/edittext"
+        android:layout_alignStart="@+id/edittext" />
+
+    <Button
+        android:id="@+id/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Stop"
+        android:layout_alignTop="@+id/speak"
+        android:layout_alignRight="@+id/edittext"
+        android:layout_alignEnd="@+id/edittext" />
 
 </RelativeLayout>
