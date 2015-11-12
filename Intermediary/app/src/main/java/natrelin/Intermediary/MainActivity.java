@@ -1,5 +1,7 @@
 package natrelin.Intermediary;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.lang.annotation.Target;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnInitListener {
@@ -49,9 +52,23 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         speak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tts.speak(input.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ttsGreater21(input.getText().toString());
+                } else {
+                    ttsUnder20(input.getText().toString());
+                }
             }
         });
+    }
+
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String text) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String text) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
     @Override
