@@ -34,6 +34,9 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     // accelerometer
     private SensorManager sensorManager;
     private SensorEventListener sensorEventListener;
+    private float mAccel; // acceleration apart from gravity
+    private float mAccelCurrent; // current acceleration including gravity
+    private float mAccelLast; // last acceleration including gravity
 
     private final String TAG = "MAINACTIVITY";
 
@@ -100,6 +103,17 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                 float x = event.values[0];
                 float y = event.values[1];
                 float z = event.values[2];
+                mAccelLast = mAccelCurrent;
+                mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+                float delta = mAccelCurrent - mAccelLast; // change in acceleration
+                mAccel = mAccel * 0.9f + delta;
+
+                // erase textinput if acceleration is higher than a certain value
+                if (mAccel > 12) {
+                    input.setText("");
+                    Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
 
             @Override
@@ -110,9 +124,9 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        /*mAccel = 0.00f;
+        mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;*/
+        mAccelLast = SensorManager.GRAVITY_EARTH;
     }
 
     /** the accelerometer should be deactivated onPause and activated onResume to save resources **/
