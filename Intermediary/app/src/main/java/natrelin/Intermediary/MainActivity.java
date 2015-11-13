@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     private Locale[] availableLanguages;
 
     // accelerometer
+    private Vibrator vibrator;
     private SensorManager sensorManager;
     private SensorEventListener sensorEventListener;
     private float mAccel; // acceleration apart from gravity
@@ -97,6 +99,8 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     }
 
     private void initAccelerometer() {
+        vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
@@ -111,8 +115,9 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                 // erase textinput if acceleration is higher than a certain value
                 if (mAccel > 12) {
                     input.setText("");
-                    Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_LONG);
-                    toast.show();
+                    vibrator.vibrate(100);
+                    /*Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_LONG);
+                    toast.show();*/
                 }
             }
 
@@ -127,6 +132,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
+
     }
 
     /** the accelerometer should be deactivated onPause and activated onResume to save resources **/
