@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         initAccelerometer(); // set up accelerometer
 
         availableLanguages = Locale.getAvailableLocales(); // get all of the available locales
-        userLocale = Locale.JAPAN; // create a default voice
+        userLocale = Locale.US; // create a default voice
 
         tts = new TextToSpeech(this, this);
 
@@ -154,19 +154,30 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         for(Locale locale : availableLanguages) {
-            // TODO check if the language is installed on the device, if so...
-            //Setting speech language
-            //If your device supports language you set above
+            // TODO if language installed add to language options
+
             //if (tts.setLanguage(locale) == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE)
-                menu.add(locale.toString());
+            //if(isOfflineDictionaryPresent(locale.toString()))
+            //if(TextToSpeech.LANG_AVAILABLE == tts.isLanguageAvailable(locale))
+
+            menu.add(locale.getDisplayName());
         }
 
-        /*menu.add(userLocale.toString());
-        menu.add((Locale.US).toString());*/
+        // most popular languages
+        /** Simplified Chinese, Traditional Chinese, French, Italian, German, Japanese, Korean,
+         * Spanish, Dutch, Portugese, Russian, Swedish, Norwegian, English,
+         * Arabic, Polish, Danish, Turkish, Portugal Portugese, Hebrew, Greek, Finnish,
+         * Ukrainian, Thai, Czech, Romanian, Indonesian, Croatian, Serbian, Malay **/
 
         return true;
         /** onInit is called after this function... **/
     }
+
+    // REQUIRES ROOT PRIVILEGES
+    /*public static boolean isOfflineDictionaryPresent(String language) {
+        String dir = "/system/usr/srec/config/" + language.replace('_', '.').toLowerCase();
+        return (new File(dir)).isDirectory();
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -174,9 +185,19 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        // set language on click
-        userLocale = new Locale(item.toString());
-        tts.setLanguage(userLocale); // no error if the language is not available, installed languages work fine
+        // parse the language display name into the language code to set our locale
+        languageSearch: {
+            for (Locale locale : availableLanguages) {
+                if (locale.getDisplayName().equals(item.toString())) {
+                    // set language on click
+                    userLocale = new Locale(locale.toString());
+                    break languageSearch;
+                }
+            }
+        }
+        // TODO: 11/12/15 show toast if language is not installed
+        // no error if the language is not available, installed languages work fine
+        tts.setLanguage(userLocale);
         return super.onOptionsItemSelected(item);
     }
 
@@ -197,7 +218,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
             else {
                 speak.setEnabled(true);
             }
-            //TTS is not initialized properly
+        //TTS is not initialized properly
         } else {
             Toast.makeText(this, "TTS Initilization Failed", Toast.LENGTH_LONG).show();
             Log.e("TTS", "Initilization Failed");
