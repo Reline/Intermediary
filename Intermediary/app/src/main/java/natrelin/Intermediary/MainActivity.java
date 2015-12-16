@@ -20,9 +20,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnInitListener {
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
     // text to speech
     private EditText input;
@@ -50,7 +53,8 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         initAccelerometer(); // set up accelerometer
 
         availableLanguages = Locale.getAvailableLocales(); // get all of the available locales
-        userLocale = Locale.US; // create a default voice
+
+        userLocale = Locale.JAPAN; // create a default voice
 
         tts = new TextToSpeech(this, this);
 
@@ -168,6 +172,10 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
          * Spanish, Dutch, Portugese, Russian, Swedish, Norwegian, English,
          * Arabic, Polish, Danish, Turkish, Portugal Portugese, Hebrew, Greek, Finnish,
          * Ukrainian, Thai, Czech, Romanian, Indonesian, Croatian, Serbian, Malay **/
+
+        // languages spoken in United States
+        /** Chinese, English, French, German, Italian, Japanese, Korean, 
+         * Polish, Portugese, Spanish, Tagalog, Vietnamese **/
 
         return true;
         /** onInit is called after this function... **/
