@@ -1,33 +1,39 @@
-package natrelin.Intermediary;
+package com.github.reline.intermediary;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.text.Collator;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.TreeSet;
 
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
+    ProgressDialog progressDialog;
+
+    private Menu menu;
+
     // text to speech
+    private TextView currLang;
     private EditText input;
     private TextToSpeech tts;
     private Button speak;
@@ -43,20 +49,24 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
 
-    private final String TAG = "MAINACTIVITY";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage(MainActivity.this.getString(R.string.loading));
+        progressDialog.show();
+
         initAccelerometer(); // set up accelerometer
 
         availableLanguages = Locale.getAvailableLocales(); // get all of the available locales
 
-        userLocale = Locale.JAPAN; // create a default voice
+        userLocale = Locale.ENGLISH; // create a default voice
 
         tts = new TextToSpeech(this, this);
+
+        currLang = (TextView) findViewById(R.id.currentLang);
 
         input = (EditText) findViewById(R.id.edittext);
         // automatically bring up the keyboard when the edittext is focused
@@ -116,18 +126,16 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 float delta = mAccelCurrent - mAccelLast; // change in acceleration
                 mAccel = mAccel * 0.9f + delta;
 
-                // erase textinput if acceleration is higher than a certain value
+                // erase textinput if acceleration is higher than a certain value (12)
                 if (mAccel > 12) {
                     input.setText("");
                     vibrator.vibrate(100);
-                    /*Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_LONG);
-                    toast.show();*/
                 }
             }
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+                // do nothing
             }
         };
 
@@ -143,49 +151,25 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorEventListener,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onPause() {
-        sensorManager.unregisterListener(sensorEventListener);
         super.onPause();
+        sensorManager.unregisterListener(sensorEventListener);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        for(Locale locale : availableLanguages) {
-            // TODO if language installed add to language options
-
-            //if (tts.setLanguage(locale) == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE)
-            //if(isOfflineDictionaryPresent(locale.toString()))
-            //if(TextToSpeech.LANG_AVAILABLE == tts.isLanguageAvailable(locale))
-
-            menu.add(locale.getDisplayName());
-        }
-
-        // most popular languages
-        /** Simplified Chinese, Traditional Chinese, French, Italian, German, Japanese, Korean,
-         * Spanish, Dutch, Portugese, Russian, Swedish, Norwegian, English,
-         * Arabic, Polish, Danish, Turkish, Portugal Portugese, Hebrew, Greek, Finnish,
-         * Ukrainian, Thai, Czech, Romanian, Indonesian, Croatian, Serbian, Malay **/
-
-        // languages spoken in United States
-        /** Chinese, English, French, German, Italian, Japanese, Korean, 
-         * Polish, Portugese, Spanish, Tagalog, Vietnamese **/
-
         return true;
         /** onInit is called after this function... **/
     }
-
-    // REQUIRES ROOT PRIVILEGES
-    /*public static boolean isOfflineDictionaryPresent(String language) {
-        String dir = "/system/usr/srec/config/" + language.replace('_', '.').toLowerCase();
-        return (new File(dir)).isDirectory();
-    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -199,11 +183,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 if (locale.getDisplayName().equals(item.toString())) {
                     // set language on click
                     userLocale = new Locale(locale.toString());
+                    currLang.setText(locale.getDisplayName());
                     break languageSearch;
                 }
             }
         }
-        // TODO: 11/12/15 show toast if language is not installed
         // no error if the language is not available, installed languages work fine
         tts.setLanguage(userLocale);
         return super.onOptionsItemSelected(item);
@@ -218,39 +202,36 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             //If your device doesn't support language you set above
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                //Cook simple toast message with message
-                Toast.makeText(this, "Language not supported", Toast.LENGTH_LONG).show();
-                Log.e("TTS", "Language is not supported");
+                // Cook simple toast message with message
+                Toast.makeText(this, "User locale language not supported on this device", Toast.LENGTH_LONG).show();
             }
-            //Enable the button
+            // Enable the button
             else {
+                currLang.setText(userLocale.getDisplayName());
                 speak.setEnabled(true);
             }
-        //TTS is not initialized properly
-        } else {
-            Toast.makeText(this, "TTS Initilization Failed", Toast.LENGTH_LONG).show();
-            Log.e("TTS", "Initilization Failed");
+
+            // add available languages to the menu
+            Collection<String> languages = new TreeSet<>(Collator.getInstance());
+            for(Locale locale : availableLanguages) {
+                if(TextToSpeech.LANG_AVAILABLE == tts.isLanguageAvailable(locale) &&
+                        !locale.getDisplayName().contains("(")) { // remove duplicates
+                    languages.add(locale.getDisplayName());
+                }
+            }
+            for (String language : languages) {
+                menu.add(language);
+            }
         }
+        progressDialog.dismiss();
     }
 
     @Override
     protected void onDestroy() {
-
-        // E/ViewRootImpl: sendUserActionEvent() mView == null // device issue, not app related
-
-        // TODO: 11/12/15 fix InputConnection warnings
-        // W/IInputConnectionWrapper: showStatusIcon on inactive InputConnection
-        // W/IInputConnectionWrapper: getExtractedText on inactive InputConnection
-        // W/IInputConnectionWrapper: beginBatchEdit on inactive InputConnection
-        // W/IInputConnectionWrapper: endBatchEdit on inactive InputConnection
-        // W/IInputConnectionWrapper: finishComposingText on inactive InputConnection
-
         //Close the Text to Speech Library
         if(tts != null) {
-
             tts.stop();
             tts.shutdown();
-            Log.d(TAG, "TTS Destroyed");
         }
         super.onDestroy();
     }

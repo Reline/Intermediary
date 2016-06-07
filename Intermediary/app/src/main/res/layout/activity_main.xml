@@ -1,36 +1,44 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current_language"
+        android:id="@+id/currentLang"
+        android:textSize="16sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:id="@+id/edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="12"
-        android:hint="Type your message here"
+        android:hint="@string/your_message"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="66dp" />
 
     <Button
         android:id="@+id/speak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="83dp"
-        android:hint="Speak"
+        android:layout_marginTop="38dp"
+        android:hint="@string/speak"
         android:layout_below="@+id/edittext"
-        android:layout_alignLeft="@+id/edittext"
         android:layout_alignStart="@+id/edittext" />
 
     <Button
         android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Stop"
+        android:hint="@string/stop"
         android:layout_alignTop="@+id/speak"
-        android:layout_alignRight="@+id/edittext"
         android:layout_alignEnd="@+id/edittext" />
 
 </RelativeLayout>

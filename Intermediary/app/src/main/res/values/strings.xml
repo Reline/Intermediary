@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Intermediary</string>
+    <string name="your_message">Type your message here</string>
+    <string name="speak">Speak</string>
+    <string name="stop">Stop</string>
+    <string name="current_language">Current Language</string>
+    <string name="loading">Loading language libraries, please wait...</string>
 </resources>
