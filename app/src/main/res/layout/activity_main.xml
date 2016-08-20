@@ -15,7 +15,7 @@ android:layout_width="match_parent"
         android:layout_centerHorizontal="true" />
 
     <EditText
-        android:id="@+id/edittext"
+        android:id="@+id/input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="12"
@@ -30,8 +30,9 @@ android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="38dp"
         android:hint="@string/speak"
-        android:layout_below="@+id/edittext"
-        android:layout_alignStart="@+id/edittext" />
+        android:layout_below="@+id/input"
+        android:layout_alignStart="@+id/input"
+        android:layout_alignLeft="@+id/input" />
 
     <Button
         android:id="@+id/stop"
@@ -39,6 +40,7 @@ android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/stop"
         android:layout_alignTop="@+id/speak"
-        android:layout_alignEnd="@+id/edittext" />
+        android:layout_alignEnd="@+id/input"
+        android:layout_alignRight="@+id/input" />
 
 </RelativeLayout>

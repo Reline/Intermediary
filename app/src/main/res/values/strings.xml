@@ -4,5 +4,5 @@
     <string name="speak">Speak</string>
     <string name="stop">Stop</string>
     <string name="current_language">Current Language</string>
-    <string name="loading">Loading language libraries, please wait...</string>
+    <string name="loading">Loading language libraries, please wait…</string>
 </resources>
